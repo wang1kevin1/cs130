@@ -1,0 +1,124 @@
+\documentclass[11pt]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsfonts,amsmath,amsthm,amssymb,fullpage}
+
+\title{CMPS 130: HW 3}
+\author{Kevin Wang}
+
+\newcounter{problem}
+\setcounter{problem}{1}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[problem]
+
+\theoremstyle{plain}
+\newtheorem{lemma}{Lemma}[problem]
+
+\theoremstyle{plain}
+\newtheorem{theorem*}{Theorem}
+\newtheorem{theorem}{Theorem}[problem]
+      
+\begin{document}
+\maketitle
+
+\section*{Solution to Problem 1}
+
+\begin{definition}[Kleene Closure]
+$\Sigma^{*}$ is the set of all finite strings over $\Sigma$ 
+as defined by $\underset{k \geq 0}{\bigcup} \Sigma^{k}$.\footnote{lec2.pdf}
+\end{definition}
+
+\begin{definition} [Recursively Enumerable Languages]
+A language $\mathcal{L}$ is Recursively Enumerable (RE) if there exists some Turing Machine $M$,
+such that $L(M)=\mathcal{L}$.\footnote{lec12.pdf}
+\end{definition}
+
+\hrule
+
+\begin{theorem*}
+Recursively Enumerable (RE) languages are closed under Kleene Closure.
+\end{theorem*}
+
+\begin{proof}
+Let $\mathcal{L}$ be some RE language and let $M$ be some Turing Machine (TM) such that $L(M)=\mathcal{L}$ (Definition 1.2).
+Let $\mathcal{L}^{*}$ be the Kleene Closure of $\mathcal{L}$. \newline
+
+\noindent We define a TM $M^{*}$ that receives input $x$.
+$M^{*}$ then non-deterministically splits $x$ into $s_{1},s_{2},\cdots,s_{k}$ where $k \leq |x|$.
+Note that the number of ways to split $x$ is finite due to the length of input $x$.
+Input $x$ is then accepted if for all $i \leq k$, $s_{i}$ is accepted.
+The trivial case, $x= \epsilon$, is also accepted. \newline
+
+\noindent Observe that $M^{*}$ simulates the Kleene Closure (Definition 1.1) and therefore accepts $\mathcal{L}^{*}$,
+such that $L(M^{*})=\mathcal{L}^{*}$. Thus, $\mathcal{L}^{*}$ is Recursively Enumerable (Definition 1.2) --
+proving that RE languages are closed under Kleene Closure.
+\end{proof}
+
+\pagebreak
+
+\stepcounter{problem}
+\section*{Solution to Problem 2}
+
+\begin{theorem*}
+
+\end{theorem*}
+
+\begin{proof}
+
+\end{proof}
+
+\pagebreak
+
+\stepcounter{problem}
+\section*{Solution to Problem 3}
+
+\begin{theorem*}
+
+\end{theorem*}
+
+\begin{proof}
+
+\end{proof}
+
+\pagebreak
+
+\stepcounter{problem}
+\section*{Solution to Problem 4}
+
+\begin{theorem*}
+
+\end{theorem*}
+
+\begin{proof}
+
+\end{proof}
+
+\pagebreak
+
+\stepcounter{problem}
+\section*{Solution to Problem 5}
+
+\begin{theorem*}
+
+\end{theorem*}
+
+\begin{proof}
+
+\end{proof}
+
+\pagebreak
+
+\stepcounter{problem}
+\section*{Solution to Problem 6}
+
+\begin{theorem*}
+
+\end{theorem*}
+
+\begin{proof}
+
+\end{proof}
+
+\end{document}

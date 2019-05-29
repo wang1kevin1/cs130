@@ -1,0 +1,365 @@
+\documentclass[11pt]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsfonts,amsmath,amsthm,amssymb,fullpage}
+
+\title{CMPS 130: HW 1}
+\author{Kevin Wang}
+
+\newcounter{problem}
+\setcounter{problem}{1}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[problem]
+
+\theoremstyle{plain}
+\newtheorem{lemma}{Lemma}[problem]
+
+\theoremstyle{plain}
+\newtheorem{theorem*}{Theorem}
+\newtheorem{theorem}{Theorem}[problem]
+      
+\begin{document}
+\maketitle
+
+\section*{Solution to Problem 1}
+
+\begin{definition}
+An all-NFA $N$ is a 5-tuple $(Q,\Sigma,\delta,q_{0},F)$ that accepts a string $x$ if every possible state that $N$ could be in after reading $x$ is an accepting state.
+\end{definition}
+
+\begin{definition}
+A language $\mathcal{L}$ is regular if there exists some DFA $A$ such that $L(A)=\mathcal{L}$.\footnote{Referenced lec2.pdf}
+\end{definition}
+
+\begin{lemma}[Hopcroft Theorem 2.11]
+If $D=(Q_{D},\Sigma,\delta_{D},q_{0_{D}},F_{D})$ is the DFA constructed from NFA $N=(Q_{N},\Sigma,\delta_{N},q_{0_{N}},F_{N})$ by the subset construction, then $L(D)=L(N)$
+\end{lemma}
+
+\begin{lemma}[Hopcroft Theorem 2.12]
+A language $\mathcal{L}$ is accepted by some DFA if and only if $\mathcal{L}$ is accepted by some NFA.
+\end{lemma}
+
+\hrule
+
+\begin{theorem*}
+All-NFAs recognize the class of regular languages.
+\end{theorem*}
+
+\begin{proof}
+To prove that all-NFAs recognize the class of regular languages, we must show:
+\begin{enumerate}
+\item Every all-NFA recognizes some regular language.
+\item Every regular language is recognized by some all-NFA.
+\end{enumerate}
+
+\noindent Let $N=(Q_{N},\Sigma,\delta_{N},q_{0_{N}},F_{N})$ be an all-NFA that recognizes some language $L(N)$. 
+If $L(N)$ is regular, then there is a DFA $M=(Q_{M},\Sigma,\delta_{M},q_{0_{M}},F_{M})$ 
+that recognizes some language $L(N)$ such that $L(M)=L(N)$ (Definition 1.2). 
+We construct $M$ as follows:\footnote{Referenced lec3.pdf}
+
+\begin{enumerate}
+\item $Q_{M} = 2^{Q_{N}}$ (set of all subsets of $Q_{N}$)
+\item $\Sigma$ is the same
+\item For $S \subseteq Q_{N}$,$S \in Q_{M}$ and $\exists a \in \Sigma$: 
+$\delta_{M}(S,a)=\underset{r \in R}{\bigcup}\text{ECLOSE}(r)$, where $R=\underset{s \in S}{\bigcup}\delta_{N}(s,a)$
+\item $q_{0_{M}}=\text{ECLOSE}(q_{0_{N}})\in Q_{M}$, where $q_{0_{N}} \in Q_{N}$
+\item $F_{M}=\{S|S \in Q_{M}, S \subseteq F_{N}\}$
+\end{enumerate}
+
+\noindent Let $x \in \Sigma^{*}$. Let $\hat{\delta}_{N}$ be the set of states $N$ could be in after reading $x$. 
+DFA $M$ then reads $x$, ending at state $\hat{\delta}_{M}$. \newline
+
+\noindent By definition of an all-NFA (Definition 1.1), 
+$x \in L(N)$ if and only if $\hat{\delta}_{N} (q_{0_{N}},x) \subseteq F_{N} \implies x \in \mathcal{L}$.
+Thus, every all-NFA recognizes some regular language. \newline
+
+\noindent By the construction of $M$, $x \in L(M) = \mathcal{L}$ if and only if 
+$\hat{\delta}_{N} (q_{0_{N}},x) \in F_{M} \implies \hat{\delta}_{N} (q_{0_{N}},x) \subseteq F_{N} \implies x \in L(N)$.\footnote{Referenced lec4.pdf} Thus, every regular language is recognized by some all-NFA. \newline
+
+\noindent Therefore, all-NFAs recognize the class of regular languages.
+\end{proof}
+
+\pagebreak
+
+\stepcounter{problem}
+\section*{Solution to Problem 2}
+
+\begin{definition}
+A language $\mathcal{L}$ is regular if there exists some DFA $A$ such that $L(A) \Longleftrightarrow \mathcal{L}$.\footnote{Referenced lec2.pdf}
+\end{definition}
+
+\hrule
+
+\begin{theorem*}
+Given a regular language $\mathcal{L}$ over the alphabet $\Sigma$, we can define a language:
+\begin{center}
+$PREFIX(\mathcal{L})=\{ x | \exists w,xw \in \mathcal{L} \}$
+\end{center}
+that is regular.
+\end{theorem*}
+
+\begin{proof}
+If $\mathcal{L}$ is regular, then there is a DFA $D=(Q,\Sigma,\delta,q_{0},F)$ such that $L(D)=\mathcal{L}$ (Definition 2.1).
+We will prove PREFIX($\mathcal{L}$) is regular by constructing a DFA $D'$ that accepts PREFIX($\mathcal{L}$). 
+DFA $D'=(Q',\Sigma,\delta',q_{0}',F')$ is constructed as follows:
+
+\begin{enumerate}
+\item $Q' = Q$
+\item $\Sigma$
+\item $\delta' = \delta$
+\item $q_{0}' = q_{0}$
+\item For $S \subseteq Q$ and $\exists x \in \Sigma^{*}$, $F'=\{S|\delta(s \in S,x) = f \in F \}$
+\end{enumerate}
+
+\noindent We end up with a DFA $D'$ that is very similar to DFA $D$ 
+with the exception of the set of accepting states $F'$. 
+By construction of $D'$, we determine based on $F'$ that $x \in \text{PREFIX}(\mathcal{L})$
+if $x \in \mathcal{L}$. \newline
+ 
+\noindent As the set of accepting states $F'$ of $D'$ is the set of prerequisite states for reaching $f \in F$ of $D$, we can determine that by definition of the language $\text{PREFIX}(\mathcal{L})$,
+containing all prefixes of strings in $\mathcal{L}$, $x \in \mathcal{L}$
+if $x \in \text{PREFIX}(\mathcal{L})$. \newline
+
+\noindent Thus DFA $D$ recognizes language PREFIX($\mathcal{L}$), proving that it is regular (Definition 2.1)
+\end{proof}
+
+\pagebreak
+
+\stepcounter{problem}
+\section*{Solution to Problem 3}
+
+\begin{theorem*}
+All languages recognized by PFSAs are regular.
+\end{theorem*}
+
+\begin{proof}
+Let PFSA $P_{k} = (Q, \Sigma, \delta, q_{0}, F)$ where $k$ is the number of pebbles initially at $q_{0}$.
+Let DFA $D = (Q,\Sigma,\delta,q_{0},F)$ accept some regular language $L(D)$. 
+We first observe that $P_1$, a PFSA with 1 pebble, is equivalent to DFA $D$,
+as there is no non-deterministic choosing of a pebble to move.
+Thus, $L(P_{1})=L(D)$ and thus $L(P_{1})$ is regular.\newline
+
+\noindent Assume $L(P_{k})$ is regular and accepted by some DFA $M= (Q, \Sigma, \delta, q_{0}, F)$.
+Observe that any input $x$ accepted by a PFSA with $k$ pebbles is also accepted by a PFSA with $n>k$ pebbles
+(by keeping $n-k$ pebbles at the start, $q_{0}$). Thus, we can conclude that $L(P_{k}) \subsetneq L(P_{k+1})$.
+
+\noindent We then construct a DFA $M'$ by adding a path from each state in DFA $M$ to a copy of DFA $D$,
+such that DFA $M'$ becomes a fractal of $D$ of scale $k$. Thus $L(P_{k+1})$ is regular. \newline
+
+\noindent By induction, all languages accepted by PFSAs are regular.
+\end{proof}
+
+\pagebreak
+
+\stepcounter{problem}
+\section*{Solution to Problem 4}
+
+\begin{lemma}[Closure Under Complement]
+The complement of a regular language is regular.
+\end{lemma}
+
+\begin{lemma}[Pumping Lemma for Regular Languages]
+Let $\mathcal{L}$ be a regular language. 
+There exists a constant $n$ (which depends on $\mathcal{L}$) 
+such that $\forall w \in \mathcal{L}$ such that $|w| \geq n$,
+we can break $w$ into three strings, $w=xyz$ such that:
+\begin{enumerate}
+\item $y \neq \epsilon$.
+\item $|xy| \leq n$.
+\item For all $k \geq 0$, the string $xy^{k}z$ is also in $\mathcal{L}$.
+\end{enumerate}
+\end{lemma}
+
+\hrule
+
+\begin{theorem}
+Let the alphabet $\Sigma = \{0,1\}$. 
+The language $\mathcal{L}$ -- defined as the set of strings that are not of the form $ss$ -- is not regular.
+\end{theorem}
+
+\begin{proof}
+Assume $\mathcal{L}$ is regular. Let $\overline{\mathcal{L}}$ be the complement of language $\mathcal{L}$.
+We define this language as the set of strings that are exactly of the form $ss$.
+By the closure properties of regular languages -- specifically Closure under Complement (Lemma 4.1) --
+$\overline{\mathcal{L}}$ must also be regular.\newline
+
+\noindent Let $n$ be the number of states in $\overline{\mathcal{L}}$. 
+Since $\overline{\mathcal{L}}$ is regular, the Pumping Lemma (Lemma 4.2) should hold.
+Let $w=0^{n}1^{n}0^{n}1^{n}$, satisfying $|w|=4n \geq n$. 
+Let $w=xyz$, where by the Pumping Lemma $|xy| \leq n$. 
+Therefore, $y$ consists of only 0's where $y \neq \epsilon$.\newline
+
+\noindent Let $k=0$. 
+The Pumping Lemma states that $xy^{k}z$ is in $\overline{\mathcal{L}}$,
+if $\overline{\mathcal{L}}$ is regular.\footnote{Referenced Hopcroft 4.1 }
+However, $xz$ has $2n$ 1's since all the 1's of $w$ are in $z$.
+But $xz$ also has fewer than $2n$ 0's, because we lost the 0's of $y$.
+Since $y \neq \epsilon$ we know that there can be no more than $2n-1$ 0's among both $x$ and $z$.
+Thus $xz$ is not a part of $\overline{\mathcal{L}}$ 
+contradicting our prior assumption of $\overline{\mathcal{L}}$'s regularity.\newline
+
+\noindent Having proven by contradiction that $\overline{\mathcal{L}}$ is not regular, 
+this contradicts the Closure under Complement properties (Lemma 4.1) 
+thus proving that the language $\mathcal{L}$, is not regular.
+\end{proof}
+
+\hrule
+
+\begin{theorem}
+Let the alphabet $\Sigma = \{0,1\}$. 
+The language $\mathcal{C}=\{ 1^{i}a|a \text{ has at most } i \text{ 1's, } i \geq 0\}$ is not regular.
+\end{theorem}
+
+\begin{proof}
+Assume $\mathcal{C}$ is regular. Let $i=n$ be the number of states in $\mathcal{C}$. 
+Since $\mathcal{C}$ is regular, the Pumping Lemma (Lemma 4.2) should hold.
+Let $w=1^{n}0^{n}1^{n}$, satisfying $|w|=3n \geq n$. 
+Let $w=xyz$, where by the Pumping Lemma $|xy| \leq n$. 
+Therefore, $y$ consists of only 1's where $y \neq \epsilon$.\newline
+
+\noindent Let $k=0$. The Pumping Lemma states that $xy^{k}z$ is in $\mathcal{C}$, if $\mathcal{C}$ is regular.
+As such, $xy \rightarrow x$ has at most $n-1$ 1's since $y \neq \epsilon$.
+However, $z$ still has $n$ 1's since all the latter 1's of the string are in $z$.
+Hence, $a = xz$ does not have at most $i = n$ 1's.
+Thus $xz$ is not a part of $\mathcal{C}$ contradicting our prior assumption,
+proving that $\mathcal{C}$ is not regular.
+\end{proof}
+
+\pagebreak
+
+\stepcounter{problem}
+\stepcounter{theorem*}
+\section*{Solution to Problem 5}
+
+\begin{lemma}
+A language $\mathcal{L}$ is regular if and only if $\mathcal{L}$ can be described by a regular expression.\footnote{Referenced lec5.pdf}
+\end{lemma}
+
+\hrule
+
+\begin{theorem*}
+Let $\Sigma=\{0,1\}$. Prove that language 
+$\mathcal{B}=\{1^{k}y|y \text{ has at least } k \text{ 1's, } k \geq 1 \}$ is regular.
+\end{theorem*}
+
+\begin{proof}
+We make the observation that any string in $\mathcal{B}$ start with at least one 1 (when $k=1$). 
+By definition of the substring $y$, the string also includes at least one other 1.
+As such, let language $\mathcal{B}_{1}=\{1^{1}y|y \text{ has at least } 1 \text{ 1's, }\}$.
+By construction, we note that $\mathcal{B}_{1} \subset \mathcal{B}$ and thus 
+any string $w$ accepted by the language $\mathcal{B}_{1}$ is also accepted by $\mathcal{B}$.
+Thereby, we can construct a regular expression: 
+\begin{center}
+$1^{k}(0^{*}1)^{k}\Sigma^{*} = 10^{*}1\Sigma^{*}$
+\end{center}
+that defines this language.
+By Lemma 5.1, language $\mathcal{B}_{1}$ is regular, and thus the base case is satisfied. \newline
+
+\noindent Let $\mathcal{B}_{k}$ be a regular language where $\mathcal{B}_{k} \subset \mathcal{B}$.
+\begin{align*}
+\mathcal{B}_{k+1} &= 1^{k+1}(0^{*}1)^{k+1}\Sigma^{*} \\
+&= 11^{k}0^{*}1(0^{*}1)^{k}\Sigma^{*}
+\end{align*}
+
+\noindent As such, we have:
+\begin{align*}
+\mathcal{B}_{1} &= 10^{*}1\Sigma^{*} \\
+\mathcal{B}_{2} &= 110^{*}10^{*}1\Sigma^{*} \\
+\mathcal{B}_{3} &= 1110^{*}10^{*}10^{*}1\Sigma^{*} \\
+\mathcal{B}_{4} &= 11110^{*}10^{*}10^{*}10^{*}1\Sigma^{*} \\
+&\vdots \\
+\mathcal{B}_{k} &= 1^{k}(0^{*}1)^{k}\Sigma^{*} \\
+&\vdots
+\end{align*}
+
+\noindent Thus, because there is a regular expression defining $\mathcal{B}$ ($\forall k \geq 1$) 
+and $\mathcal{B} = \underset{k \geq 1}{\bigcup} \mathcal{B}_{k}$,
+$\mathcal{B}$ must be a regular language.
+\end{proof}
+
+\pagebreak
+
+\stepcounter{problem}
+\section*{Solution to Problem 6}
+
+\begin{lemma}[Closure Under Concatenation]
+Given two regular languages $\mathcal{L}$ and $\mathcal{M}$, 
+the language $\mathcal{L} \cdot \mathcal{M}$ is also regular. 
+\end{lemma}
+
+\hrule
+
+\begin{theorem*}
+Regular languages are closed under rotational closure, 
+where the rotational closure of a regular language $\mathcal{L}$ is defined as
+RC($\mathcal{L}$)$=\{ xy|yx \in \mathcal{L} \}$.
+\end{theorem*}
+
+\begin{proof}
+Let language $\mathcal{L}=\mathcal{X} \cdot \mathcal{Y}$ 
+such that $x \in \mathcal{X}$, $y \in \mathcal{Y}$, and $xy \in \mathcal{L}$. 
+As $\mathcal{L}$ is known to be regular, then by the converse of Lemma 6.1, 
+languages $\mathcal{X}$ and $\mathcal{Y}$ must also be regular. \newline
+
+\noindent The rotational closure of $\mathcal{L}$ can thus be formed by the 
+concatenation of $\mathcal{Y}$ and $\mathcal{X}$:
+\begin{align*}
+\text{RC}(\mathcal{L}) &= \{ xy|yx \in \mathcal{L} \} \\
+&= \{xy|yx \text{, } y \in \mathcal{Y} \text{ and } x \in \mathcal{X}\} \\
+&= \mathcal{Y} \cdot \mathcal{X}
+\end{align*}
+\noindent Thus by closure under concatenation (Lemma 6.1), 
+RC($\mathcal{L}$) is regular -- 
+proving that regular languages are closed under rotational closure.
+\end{proof}
+
+\pagebreak
+
+\stepcounter{problem}
+\section*{Solution to Problem 7}
+
+\begin{lemma}[Closure Under Concatenation]
+Given two regular languages $\mathcal{L}$ and $\mathcal{M}$, 
+the language $\mathcal{L} \cdot \mathcal{M}$ is also regular. 
+\end{lemma}
+
+\begin{lemma}[Closure Under Intersection]
+Given two regular languages $\mathcal{L}$ and $\mathcal{M}$, 
+the language $\mathcal{L} \cap \mathcal{M}$ is also regular. 
+\end{lemma}
+
+\begin{lemma}[Closure Under Difference]
+Given two regular languages $\mathcal{L}$ and $\mathcal{M}$, 
+the language $\mathcal{L} - \mathcal{M}$ is also regular. 
+\end{lemma}
+
+\hrule
+
+\begin{theorem*}
+Given two regular languages $\mathcal{L}$ and $\mathcal{M}$, 
+the language $\mathcal{L} \ominus \mathcal{M}$ is also regular, where:
+\begin{center}
+$\mathcal{L} \ominus \mathcal{M} = \{ x|x \in \mathcal{L} \text{ and } x \text{ does not contain any string of } \mathcal{M} \text{ as substring}\}$
+\end{center}
+
+\end{theorem*}
+
+\begin{proof}
+Let $\mathcal{L} \oplus \mathcal{M} = \{ x|x \in \mathcal{L} \text{ and } x \text{ contains some string of } \mathcal{M} \text{ as substring}\}$. Observe this is equal to the expression 
+$\mathcal{L} \cap (\Sigma^{*} \cdot \mathcal{M} \cdot \Sigma^{*})$.
+\footnote{Wasn't sure if $\mathcal{L} \oplus \mathcal{M} = \overline{\mathcal{L} \ominus \mathcal{M}}$. Otherwise would've used Closure under Complement.} \newline
+
+\noindent By definition,
+\begin{align*}
+\mathcal{L} \ominus \mathcal{M} &= \mathcal{L} - (\mathcal{L} \oplus \mathcal{M}) \\
+&= \mathcal{L} - (\mathcal{L} \cap (\Sigma^{*} \cdot \mathcal{M} \cdot \Sigma^{*})) \\
+&= \mathcal{L} - (\Sigma^{*} \cdot \mathcal{M} \cdot \Sigma^{*})
+\end{align*}
+
+\noindent Therefore by closure under concatenation, intersection, and difference (Lemmas 7.1, 7.2, and 7.3),
+$\mathcal{L} \ominus \mathcal{M}$ is regular -- proving closure under substring difference.
+\end{proof}
+
+\end{document}

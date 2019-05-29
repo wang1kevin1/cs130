@@ -1,0 +1,198 @@
+\documentclass[11pt]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsfonts,amsmath,amsthm,amssymb,fullpage}
+
+\title{CMPS 130: HW 2}
+\author{Kevin Wang}
+
+\newcounter{problem}
+\setcounter{problem}{1}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[problem]
+
+\theoremstyle{plain}
+\newtheorem{lemma}{Lemma}[problem]
+
+\theoremstyle{plain}
+\newtheorem{theorem*}{Theorem}
+\newtheorem{theorem}{Theorem}[problem]
+      
+\begin{document}
+\maketitle
+
+\section*{Solution to Problem 1}
+
+\begin{definition}
+A language $\mathcal{L}$ is a context-free language (CFL) if there exists some CFG $G$, such that $L(G)=\mathcal{L}$.
+\footnote{lec7.pdf}
+\end{definition}
+
+\hrule
+
+\begin{theorem*}
+All regular languages are context-free languages.
+\end{theorem*}
+
+\begin{proof}
+Let DFA $D=(Q,\Sigma,\delta,q_{0},F)$ accept some regular language, $\mathcal{L}$, such that $L(D)=\mathcal{L}$. \newline
+
+\noindent Let PDA $P=(Q,\Sigma,\Gamma,\delta', q_{0},\$,F)$ be constructed from DFA $D$, where
+\begin{center}
+$\delta : Q \times \Sigma \cup \{ \epsilon \} \times \Gamma \longrightarrow 2^{Q \times (\Gamma^{*} \cup \{ \epsilon \})}$ \\
+$\delta (q,a,\epsilon) = (q', \epsilon)$
+\end{center}
+\noindent such that the stack of $P$ is not used. Therefore, $P$ is functionally equivalent to DFA $D$ 
+and accepts language $\mathcal{L}$, such that $L(P)=\mathcal{L}$. \newline
+
+\noindent By Definition 1.1, $\mathcal{L}$ is a context-free language. Thus, all regular languages are CFL's.
+\end{proof}
+
+\pagebreak
+
+\stepcounter{problem}
+\section*{Solution to Problem 2}
+
+\begin{definition}
+A language $\mathcal{L}$ is a context-free language (CFL) if there exists some CFG $G$, such that $L(G)=\mathcal{L}$.
+\footnote{lec7.pdf}
+\end{definition}
+
+\begin{lemma}
+Every regular language is a context-free language. \footnote{lec7.pdf}
+\end{lemma}
+
+\begin{lemma} [Closure Under Union]
+Given CFL's $\mathcal{A}$ and $\mathcal{B}$, then $\mathcal{A} \cup \mathcal{B}$ is also a context-free language.
+\footnote{Wikipedia, Context-free-language, Closure}
+\end{lemma}
+\hrule
+
+\begin{theorem*}
+The language $\mathcal{L}=\{ x| x \text{ is not of the form } ww \text{, } w \in \{0,1\}^{*} \}$ is a CFL.
+\end{theorem*}
+
+\begin{proof}
+Let $\mathcal{L}=\mathcal{L}_{odd} \cup \mathcal{L}_{even}$ where:
+\begin{enumerate}
+\item $\mathcal{L}_{odd} = \{ x | x \in \mathcal{L}, |x| \text{ is odd} \}$
+\item $\mathcal{L}_{even} = \{ xy | xy \in \mathcal{L}, |x| = |y|, x \neq y \}$
+\end{enumerate}
+
+\noindent We first observe that $\mathcal{L}$ accepts all words of odd length, as words of form $ww$ have even lengths.
+We know that $\mathcal{L}_{odd}$ is a regular language\footnote{DFA from lec2.pdf}. 
+By Lemma 2.1, $\mathcal{L}_{odd}$ is a CFL. \newline
+
+\noindent Next, we construct a CFG $G=(V,\Sigma,P,S)$ that accepts a language $L(G)$:
+
+\begin{enumerate}
+\item $V=\{S,X,Y\}$
+\item $\Sigma = \{0,1\}$
+\item $P = \{X \longrightarrow 0X0|0X1|1X0|1X1|0$, $Y \longrightarrow 0Y0|0Y1|1Y0|1Y1|1\}$
+\item $S = XY|YX$
+\end{enumerate}
+
+\noindent We note that for each production, $|X| = |Y|$, and thus $|XY|$ must be even.
+Furthermore, because $X= \cdots|0$ and $Y= \cdots|1$, 
+there is always at least a single symbol difference between $X$ and $Y$, and thus, $X \neq Y$.
+Therefore, by construction of $G$, $L(G)=\mathcal{L}_{even}$. 
+By Definition 2.1, we know that $\mathcal{L}_{even}$ is a CFL. \newline
+
+\noindent Thus, because context-free languages are closed under union (Lemma 2.2), $\mathcal{L}$ is also a CFL.
+
+\noindent 
+\pagebreak
+\end{proof}
+
+\stepcounter{problem}
+\section*{Solution to Problem 3}
+
+\begin{lemma}
+Let $M_{N}$ be a non-deterministic Turing Machine. 
+There exists a deterministic Turing Machine $M_{D}$ that simulates $M_{N}$,
+such that $L(M_{D})=L(M_{N})$.\footnote{lec10.pdf}
+\end{lemma}
+
+\hrule
+
+\begin{theorem*}
+A Turing Machine with an extra bit in the transition function adds no additional power.
+\end{theorem*}
+
+\begin{proof}
+Observe that with an extra bit in the transition function, each state--symbol pair has 2 possible transitions.
+The 2 transitions depend on new bit $D$ being $RIGHT$ or $LEFT/$\textvisiblespace. 
+As such, the extension results in a non-deterministic Turing Machine 
+as there is more than one explicit transition for each state-symbol pair.
+Note that there is still a finite number of computational transitions.%
+Let NTM $N$'s computational tree be represented by a binary tree with root $q_{0}$ and leaf nodes $f \in F$.
+Left branches are transition functions $\delta(q_{i},\rho,LEFT)$ 
+while right branches are transition functions $\delta(q_{i},\rho,RIGHT)$.\newline
+
+\noindent We can construct a deterministic Turing Machine to simulate $N$ by using Breadth-First Search
+on $N$'s computational tree. We start with 4 tapes:
+\begin{enumerate}
+\item Memory Tape: stores input string
+\item Address Tape: stores the transitions of $N$'s computational tree
+\item Direction Tape: stores direction the head moved the last time it visited the cell
+\item Scratch Tape: used for running the simulation of $N$
+\end{enumerate}
+
+\noindent The Turing Machine then runs the simulation. 
+First, the input string is read from memory into scratch.
+For each iteration of the simulation, we read $D$ from the parallel cell from the direction tape.
+We then run BFS to find a valid transition that accepts the state--symbol pair as well as $D$.
+Then, we update the direction value to $D'$. \newline
+
+\noindent As there exists a TM that simulates $N$, the extended Turing Machine is not more powerful.
+\end{proof}
+
+\pagebreak
+
+\stepcounter{problem}
+\section*{Solution to Problem 4}
+
+\begin{theorem}
+A Turing Machine with a 2-dimensional tape has the same power as a standard Turing Machine.
+\end{theorem}
+
+\begin{proof}
+First, we will construct a Turing Machine with 2 tapes:\footnote{lec10.pdf}
+
+\begin{enumerate}
+\item Memory Tape: stores rows of symbols separated by \# and is bounded by \$ on either end
+\item Counter Tape: tracks the column of the head by adding/removing markers every move R/L
+\end{enumerate} 
+
+\noindent Note that a Turing Machine with 2 tapes is equivalent in power to a standard Turing Machine. \newline
+
+\noindent When the 2D Turing Machine moves LEFT, we move left on the memory tape. 
+If the cell is at the leftmost boundary of the 2D table, 
+the standard TM will have read in \$ or \#. The head then moves right by one step, 
+returning to the initial symbol of the row. \newline
+
+\noindent When the 2D Turing Machine moves RIGHT, we move right on the memory tape.
+If the cell is at the current rightmost boundary of the 2D table,
+the standard TM will have read in \$ or \#. 
+A blank, \textvisiblespace, is subsequently inserted by 
+shifting the symbol -- and everything right of it -- right by one cell.
+This is equivalent to adding a blank at the end of a row in the 2D Turing Machine's table. \newline
+
+\noindent When the 2D Turing Machine moves DOWN, we note the current head column and move left until a \# is met. 
+Then we move to the previous \# or \$ and make moves right until we are at the column specified from before.
+However, if we move left and a \$ is met instead, we return to the original position of the same row
+(using the column value) as the table is not expandable downwards. \newline
+
+\noindent When the 2D Turing Machine moves UP, we note the current head column and move right until a \# is met. 
+Then we make moves right until we are at the same column specified from before.
+However, if we move right and a \$ is met instead, we insert a \# followed by $n$ blanks, \textvisiblespace, 
+(where $n$ is the column index) by shifting the \$ $n+1$ cells right.
+This is equivalent to adding a new row to the top of the 2D Turing Machine's table. \newline
+
+\noindent As the 2-dimensional Turing Machine can be simulated by a 2-tape standard Turing Machine, 
+the 2D Turing Machine is not more powerful than a standard TM.
+\end{proof}
+
+\end{document}
